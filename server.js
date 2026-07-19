@@ -4,7 +4,6 @@ const mqtt = require('mqtt');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const MQTT_HOST = "mqtt://broker.hivemq.com:1883";
 const TOPICS = [
   "telemetry/saumy_dc10120/gnss",
   "telemetry/saumy_dc10120/lora_relay"
@@ -13,7 +12,10 @@ const TOPICS = [
 // In-memory latest state per node
 const nodes = {};
 
-const client = mqtt.connect(MQTT_HOST);
+const client = mqtt.connect("023a1d739888475e9b02e89c89f18aa6.s1.eu.hivemq.cloud:8883", {
+  username: "somu_gnss",
+  password: "somu_gnss1234"
+});
 
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
