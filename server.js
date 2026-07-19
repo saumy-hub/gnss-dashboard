@@ -12,7 +12,7 @@ const TOPICS = [
 // In-memory latest state per node
 const nodes = {};
 
-const client = mqtt.connect("023a1d739888475e9b02e89c89f18aa6.s1.eu.hivemq.cloud:8883", {
+const client = mqtt.connect("mqtts://023a1d739888475e9b02e89c89f18aa6.s1.eu.hivemq.cloud:8883", {
   username: "somu_gnss",
   password: "somu_gnss1234"
 });
@@ -20,6 +20,14 @@ const client = mqtt.connect("023a1d739888475e9b02e89c89f18aa6.s1.eu.hivemq.cloud
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
   TOPICS.forEach(t => client.subscribe(t));
+});
+
+client.on('error', (err) => {
+  console.error('MQTT connection error:', err.message);
+});
+
+client.on('close', () => {
+  console.log('MQTT connection closed');
 });
 
 client.on('message', (topic, message) => {
