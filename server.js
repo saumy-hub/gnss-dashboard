@@ -1,40 +1,19 @@
 const express = require('express');
-const mqtt = require('mqtt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const TOPICS = [
-  "telemetry/saumy_dc10120/gnss",
-  "telemetry/saumy_dc10120/lora_relay"
-];
+app.use(express.json());
 
 // In-memory latest state per node
 const nodes = {};
 
-const client = mqtt.connect("mqtt://broker.hivemq.com:1883");
-
-client.on('connect', () => {
-  console.log('Connected to MQTT broker');
-  TOPICS.forEach(t => client.subscribe(t));
-});
-
-client.on('error', (err) => {
-  console.error('MQTT connection error:', err.message);
-});
-
-client.on('close', () => {
-  console.log('MQTT connection closed');
-});
-
-client.on('message', (topic, message) => {
-  try {
-    const data = JSON.parse(message.toString());
-    const nodeId = data.node || topic;
-    nodes[nodeId] = { ...data, receivedAt: Date.now() };
-  } catch (e) {
-    console.error('Bad payload', e);
-  }
+app.post('/api/telemetry', (req, res) => {
+  const data = req.body;
+  const nodeId = data.node || 'unknown';
+  nodes[nodeId] = { ...data, receivedAt: Date.now() };
+  console.log('Received from', nodeId, data);
+  res.json({ status: 'ok' });
 });
 
 app.get('/api/nodes', (req, res) => {
