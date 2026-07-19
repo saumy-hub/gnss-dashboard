@@ -12,10 +12,7 @@ const TOPICS = [
 // In-memory latest state per node
 const nodes = {};
 
-const client = mqtt.connect("mqtts://023a1d739888475e9b02e89c89f18aa6.s1.eu.hivemq.cloud:8883", {
-  username: "somu_gnss",
-  password: "somu_gnss1234"
-});
+const client = mqtt.connect("mqtt://broker.hivemq.com:1883");
 
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
